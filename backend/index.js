@@ -49,6 +49,47 @@ app.get("/listFiles", (req, res) => {
   });
 });
 
+app.get("/createGDriveConfig", (req, res) => {
+  exec(
+    "rclone config create gdrive drive config_is_local true",
+    (err, stdout, stderr) => {
+      if (err) {
+        console.error(`Error: ${err.message}`);
+        res.status(500).send("Internal Server Error");
+        return;
+      }
+      if (stderr) {
+        console.error(`Rclone Error: ${stderr}`);
+        res.status(500).send("Internal Server Error");
+        return;
+      }
+
+      // // Parse the stdout to extract the auth URL
+      // const lines = stdout.split("\n");
+      // let authUrl;
+      // for (const line of lines) {
+      //   const match = line.match(
+      //     /(?<=Please go to the following link in your browser:\s+).*/
+      //   );
+      //   if (match) {
+      //     authUrl = match[0];
+      //     break;
+      //   }
+      // }
+
+      // if (!authUrl) {
+      //   console.error("Auth URL not found in rclone output");
+      //   res.status(500).send("Internal Server Error");
+      //   return;
+      // }
+
+      const response = stdout.split("\n");
+
+      res.json({ response });
+    }
+  );
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

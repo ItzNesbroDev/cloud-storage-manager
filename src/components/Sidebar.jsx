@@ -31,6 +31,11 @@ const Sidebar = () => {
     setIsOpen(false);
   };
 
+  const handleAddStorage = () => {
+    setSelectedOption("addStorage");
+    setIsOpen(false);
+  };
+
   return (
     <>
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
@@ -44,6 +49,17 @@ const Sidebar = () => {
           className="cloud-storages"
           style={{ display: isOpen ? "flex" : "none" }}
         >
+          <button
+            className="add-storage-btn"
+            onClick={() => handleAddStorage()}
+          >
+            <img
+              src="https://img.icons8.com/external-flatart-icons-outline-flatarticons/48/000000/external-add-user-interface-flatart-icons-outline-flatarticons.png"
+              alt="Add Storage"
+              className="add-storage-icon"
+            />
+            <h2>Add Storage</h2>
+          </button>
           <button className="gdrive" onClick={() => handleGdriveClick()}>
             <img
               src="https://img.icons8.com/color/48/000000/google-drive.png"
