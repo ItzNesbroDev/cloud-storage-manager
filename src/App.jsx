@@ -1,12 +1,14 @@
 import React from "react";
 import Sidebar from "./components/Sidebar";
-import "./app.css";
-import Center from "./components/Center";
+import ChatSection from "./components/Chat";
+import AddStorage from "./components/addStorage";
 
 const App = () => {
   return (
-    <div>
+    <div className="flex h-screen">
       <Sidebar />
+      <ChatSection />
+      <AddStorage />
     </div>
   );
 };
