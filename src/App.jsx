@@ -8,7 +8,6 @@ const App = () => {
     <div className="flex h-screen">
       <Sidebar />
       <ChatSection />
-      <AddStorage />
     </div>
   );
 };

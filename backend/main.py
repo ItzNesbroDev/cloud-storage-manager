@@ -15,12 +15,15 @@ def index():
 def create_remote():
     data = request.json
     remote_name = data.get('remote_name')
+    remote_type = data.get('remote_type')
 
     if not remote_name:
         return jsonify({'error': 'Remote name not provided'}), 400
+    if not remote_type:
+        return jsonify({'error': 'Remote type not provided'}), 400
 
     try:
-        subprocess.run(['rclone', 'config', 'create', remote_name, 'drive'], check=True)
+        subprocess.run(['rclone', 'config', 'create', remote_name, remote_type], check=True)
         return jsonify({'message': f'Remote "{remote_name}" created successfully'}), 200
     except subprocess.CalledProcessError as e:
         print('Error executing rclone command:', e)

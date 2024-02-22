@@ -2,16 +2,18 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 
-const addStorage = () => {
+const addStorage = ({onStorageAdded}) => {
   const [show, setShow] = React.useState(false);
   const [remoteName, setRemoteName] = React.useState("");
+  const [type, setType] = React.useState("drive")
+  const [response, setResponse] = React.useState()
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const showLogin = localStorage.getItem("showLogin");
-      if (showLogin === "true") {
+      const showPopup = localStorage.getItem("showPopup");
+      if (showPopup === "true") {
         setShow(true);
-      } else if (showLogin === "false") {
+      } else if (showPopup === "false") {
         setShow(false);
       }
     }, 1000);
@@ -24,12 +26,26 @@ const addStorage = () => {
     }
     axios
       .post(
-        "https://3000-itznesbrode-cloudstorag-tr37zxmuz1g.ws-us108.gitpod.io/create_remote",
-        { remote_name: remoteName }
+        "http://127.0.0.1:3000/create_remote",
+        { remote_name: remoteName, remote_type: type }
       )
-      .then((response) => console.log(response.data))
+      .then((response) => {
+        setResponse(response.data)
+        if (response.status === 200) {
+          setShow(false)
+          localStorage.setItem('showPopup', false)
+          alert(`Created ${remoteName} Successfully`)
+          onStorageAdded(remoteName, type)
+        } else {
+          alert(response.data)
+        }
+      })
       .catch((error) => console.error("Error:", error));
   };
+
+  const handleType = (e) => {
+    setType(e.target.value)
+  }
 
   return (
     <div>
@@ -58,7 +74,7 @@ const addStorage = () => {
                   </h3>
                   <button
                     onClick={() => {
-                      localStorage.setItem("showLogin", false);
+                      localStorage.setItem("showPopup", false);
                       setShow(false);
                     }}
                     className="absolute top-0 right-0 mt-4 mr-4"
@@ -72,6 +88,13 @@ const addStorage = () => {
                       onChange={(e) => setRemoteName(e.target.value)}
                       className="w-full p-2 rounded-lg border"
                     />
+                  </div>
+                  <div className="mt-2">
+                    <select className="p-2 w-full" value={type} onChange={handleType}>
+                      <option value="drive">GDrive</option>
+                      <option value="onedrive">OneDrive</option>
+                    </select>
+        <p>{type}</p>
                   </div>
                   <div className="mt-5 sm:mt-6">
                     <button
