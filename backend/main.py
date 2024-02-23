@@ -29,20 +29,36 @@ def create_remote():
         print('Error executing rclone command:', e)
         return jsonify({'error': 'An error occurred while creating the remote'}), 500
 
-@app.route('/list_remote', methods=['GET'])
+@app.route('/list_remote', methods=['POST'])
 def list_remote():
-    remote_name = request.args.get('remote_name')
+    data = request.json
+    remote_name = data.get('remote_name')
 
     if not remote_name:
         return jsonify({'error': 'Remote name not provided'}), 400
 
     try:
-        result = subprocess.run(['rclone', 'lsf', f'"{remote_name}":'], capture_output=True, text=True)
+        result = subprocess.run(['rclone', 'lsf', f'{remote_name}:'], capture_output=True, text=True)
         files_and_folders = result.stdout.splitlines()
         return jsonify({'files_and_folders': files_and_folders}), 200
     except subprocess.CalledProcessError as e:
         print('Error executing rclone command:', e)
         return jsonify({'error': 'An error occurred while listing the remote files and folders'}), 500
+
+@app.route('/delete_remote', methods=['POST'])
+def delete_remote():
+    data = request.json
+    remote_name = data.get('remote_name')
+
+    if not remote_name:
+        return jsonify({'error': 'Remote name not provided'}), 400
+
+    try:
+        subprocess.run(['rclone', 'config', 'delete', remote_name], check=True)
+        return jsonify({'message': f'Remote "{remote_name}" deleted successfully'}), 200
+    except subprocess.CalledProcessError as e:
+        print('Error executing rclone command:', e)
+        return jsonify({'error': 'An error occurred while deleting the remote'}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=PORT)

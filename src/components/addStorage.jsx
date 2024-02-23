@@ -2,11 +2,11 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 
-const addStorage = ({onStorageAdded}) => {
+const addStorage = ({ onStorageAdded }) => {
   const [show, setShow] = React.useState(false);
   const [remoteName, setRemoteName] = React.useState("");
-  const [type, setType] = React.useState("drive")
-  const [response, setResponse] = React.useState()
+  const [type, setType] = React.useState("drive");
+  const [response, setResponse] = React.useState();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -25,27 +25,27 @@ const addStorage = ({onStorageAdded}) => {
       return;
     }
     axios
-      .post(
-        "http://127.0.0.1:3000/create_remote",
-        { remote_name: remoteName, remote_type: type }
-      )
+      .post("http://127.0.0.1:3000/create_remote", {
+        remote_name: remoteName,
+        remote_type: type,
+      })
       .then((response) => {
-        setResponse(response.data)
+        setResponse(response.data);
         if (response.status === 200) {
-          setShow(false)
-          localStorage.setItem('showPopup', false)
-          alert(`Created ${remoteName} Successfully`)
-          onStorageAdded(remoteName, type)
+          setShow(false);
+          localStorage.setItem("showPopup", false);
+          alert(`Created ${remoteName} Successfully`);
+          onStorageAdded(remoteName, type);
         } else {
-          alert(response.data)
+          alert(response.data);
         }
       })
       .catch((error) => console.error("Error:", error));
   };
 
   const handleType = (e) => {
-    setType(e.target.value)
-  }
+    setType(e.target.value);
+  };
 
   return (
     <div>
@@ -90,11 +90,15 @@ const addStorage = ({onStorageAdded}) => {
                     />
                   </div>
                   <div className="mt-2">
-                    <select className="p-2 w-full" value={type} onChange={handleType}>
+                    <select
+                      className="p-2 w-full"
+                      value={type}
+                      onChange={handleType}
+                    >
                       <option value="drive">GDrive</option>
                       <option value="onedrive">OneDrive</option>
                     </select>
-        <p>{type}</p>
+                    <p>{type}</p>
                   </div>
                   <div className="mt-5 sm:mt-6">
                     <button
