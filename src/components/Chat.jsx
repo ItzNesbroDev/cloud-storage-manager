@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 
 const ChatSection = ({ selectedRemote }) => {
   const [files, setFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // New state for loading indicator
 
   const fetchFiles = async () => {
+    setIsLoading(true); // Set loading state to true before fetching
     try {
       const response = await fetch("http://127.0.0.1:3000/list_remote", {
         method: "POST",
@@ -16,6 +18,8 @@ const ChatSection = ({ selectedRemote }) => {
       setFiles(data.files_and_folders);
     } catch (error) {
       console.error("Error fetching files:", error);
+    } finally {
+      setIsLoading(false); // Set loading state to false after fetching
     }
   };
 
@@ -41,7 +45,17 @@ const ChatSection = ({ selectedRemote }) => {
         {!selectedRemote && (
           <div className="text-lg font-bold mb-4">Chat Section</div>
         )}
-        {selectedRemote && (
+        {isLoading && (
+          <div
+            className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+            role="status">
+            <span
+              className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+            >Loading...</span
+            >
+          </div>
+        )}
+        {selectedRemote && !isLoading && (
           <div className="grid grid-cols-3 gap-4">
             {files.map((file, index) => (
               <div key={index} className="flex flex-col items-center">
@@ -70,3 +84,4 @@ const ChatSection = ({ selectedRemote }) => {
 };
 
 export default ChatSection;
+
