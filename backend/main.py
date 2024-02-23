@@ -29,5 +29,20 @@ def create_remote():
         print('Error executing rclone command:', e)
         return jsonify({'error': 'An error occurred while creating the remote'}), 500
 
+@app.route('/list_remote', methods=['GET'])
+def list_remote():
+    remote_name = request.args.get('remote_name')
+
+    if not remote_name:
+        return jsonify({'error': 'Remote name not provided'}), 400
+
+    try:
+        result = subprocess.run(['rclone', 'lsf', f'"{remote_name}":'], capture_output=True, text=True)
+        files_and_folders = result.stdout.splitlines()
+        return jsonify({'files_and_folders': files_and_folders}), 200
+    except subprocess.CalledProcessError as e:
+        print('Error executing rclone command:', e)
+        return jsonify({'error': 'An error occurred while listing the remote files and folders'}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=PORT)
