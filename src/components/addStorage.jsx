@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
+import { API_URL } from "../api";
 
 const addStorage = ({ onStorageAdded }) => {
   const [show, setShow] = React.useState(false);
@@ -25,7 +26,7 @@ const addStorage = ({ onStorageAdded }) => {
       return;
     }
     axios
-      .post("http://127.0.0.1:3000/create_remote", {
+      .post(`${API_URL}/create_remote`, {
         remote_name: remoteName,
         remote_type: type,
       })

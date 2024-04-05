@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_URL } from "../api";
 
 const ChatSection = ({ selectedRemote }) => {
   const [files, setFiles] = useState([]);
@@ -7,7 +8,7 @@ const ChatSection = ({ selectedRemote }) => {
   const fetchFiles = async () => {
     setIsLoading(true); // Set loading state to true before fetching
     try {
-      const response = await fetch("http://127.0.0.1:3000/list_remote", {
+      const response = await fetch(`${API_URL}/list_remote`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,11 +49,11 @@ const ChatSection = ({ selectedRemote }) => {
         {isLoading && (
           <div
             className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-            role="status">
-            <span
-              className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
-            >Loading...</span
-            >
+            role="status"
+          >
+            <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+              Loading...
+            </span>
           </div>
         )}
         {selectedRemote && !isLoading && (
@@ -84,4 +85,3 @@ const ChatSection = ({ selectedRemote }) => {
 };
 
 export default ChatSection;
-

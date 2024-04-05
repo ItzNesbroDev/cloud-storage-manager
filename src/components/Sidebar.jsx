@@ -9,6 +9,7 @@ import {
 import AddStorage from "./addStorage";
 import ChatSection from "./Chat";
 import axios from "axios";
+import { API_URL } from "../api";
 
 const Sidebar = () => {
   const [storages, setStorages] = useState([]);
@@ -47,7 +48,7 @@ const Sidebar = () => {
     localStorage.setItem("storages", JSON.stringify(updatedStorages));
     axios
       .post(
-        `http://127.0.0.1:3000/delete_remote`,
+        `${API_URL}/delete_remote`,
         { remote_name: name },
         {
           headers: {
