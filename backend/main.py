@@ -79,5 +79,26 @@ def delete_remote():
         print('Error executing rclone command:', e)
         return jsonify({'error': 'An error occurred while deleting the remote'}), 500
 
+@app.route('/move_file', methods=['POST'])
+def move_file():
+    data = request.json
+    source_remote = data.get('source_remote')
+    source_path = data.get('source_path')
+    destination_remote = data.get('destination_remote')
+    destination_path = data.get('destination_path')
+
+    if not source_remote or not source_path:
+        return jsonify({'error': 'Source remote and path not provided'}), 400
+    if not destination_remote or not destination_path:
+        return jsonify({'error': 'Destination remote and path not provided'}), 400
+
+    try:
+        subprocess.run(['rclone', 'move', f'{source_remote}:{source_path}', f'{destination_remote}:{destination_path}'], check=True)
+        return jsonify({'message': f'File moved successfully from {source_remote}:{source_path} to {destination_remote}:{destination_path}'}), 200
+    except subprocess.CalledProcessError as e:
+        print('Error executing rclone command:', e)
+        return jsonify({'error': 'An error occurred while moving the file'}), 500
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=PORT)
