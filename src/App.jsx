@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "./components/Sidebar";
-import ChatSection from "./components/Chat";
+import CenterSection from "./components/Center";
 import AddStorage from "./components/addStorage";
 
 const App = () => {

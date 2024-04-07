@@ -45,6 +45,25 @@ def list_remote():
         print('Error executing rclone command:', e)
         return jsonify({'error': 'An error occurred while listing the remote files and folders'}), 500
 
+@app.route('/list_directory', methods=['POST'])
+def list_directory():
+    data = request.json
+    remote_name = data.get('remote_name')
+    directory = data.get('file_name')
+
+    if not remote_name:
+        return jsonify({'error': 'Remote name not provided'}), 400
+    if not directory:
+            return jsonify({'error': 'Directory not provided'}), 400
+    
+    try:
+        result = subprocess.run(['rclone', 'lsf', f'{remote_name}:{directory}'], capture_output=True, text=True)
+        files_and_folders = result.stdout.splitlines()
+        return jsonify({'files_and_folders': files_and_folders}), 200
+    except subprocess.CalledProcessError as e:
+        print('Error executing rclone command:', e)
+        return jsonify({'error': 'An error occurred while listing the remote files and folders'}), 500
+
 @app.route('/delete_remote', methods=['POST'])
 def delete_remote():
     data = request.json

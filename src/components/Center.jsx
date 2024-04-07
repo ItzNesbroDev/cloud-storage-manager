@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { API_URL } from "../api";
+import { useNavigate } from "react-router-dom";
 
-const ChatSection = ({ selectedRemote }) => {
+const CenterSection = ({ selectedRemote }) => {
   const [files, setFiles] = useState([]);
-  const [isLoading, setIsLoading] = useState(false); // New state for loading indicator
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const fetchFiles = async () => {
-    setIsLoading(true); // Set loading state to true before fetching
+    setIsLoading(true);
     try {
       const response = await fetch(`${API_URL}/list_remote`, {
         method: "POST",
@@ -20,7 +22,13 @@ const ChatSection = ({ selectedRemote }) => {
     } catch (error) {
       console.error("Error fetching files:", error);
     } finally {
-      setIsLoading(false); // Set loading state to false after fetching
+      setIsLoading(false);
+    }
+  };
+
+  const handleFileClick = (file) => {
+    if (file.endsWith("/")) {
+      navigate(`/${selectedRemote.name}/${file}`);
     }
   };
 
@@ -44,7 +52,15 @@ const ChatSection = ({ selectedRemote }) => {
     <div className="flex flex-col ml-64 w-full">
       <div className="flex-grow p-6">
         {!selectedRemote && (
-          <div className="text-lg font-bold mb-4">Chat Section</div>
+          <div className="flex flex-col items-center justify-center space-y-4 text-center text-lg">
+            <p className="font-light">
+              Select a remote from the left sidebar to browse files
+            </p>
+            <p className="font-light">
+              If this is your first time using the app, try creating a new
+              storage
+            </p>
+          </div>
         )}
         {isLoading && (
           <div
@@ -59,11 +75,15 @@ const ChatSection = ({ selectedRemote }) => {
         {selectedRemote && !isLoading && (
           <div className="grid grid-cols-3 gap-4">
             {files.map((file, index) => (
-              <div key={index} className="flex flex-col items-center">
+              <div
+                key={index}
+                onClick={() => handleFileClick(file)}
+                className="flex flex-col items-center"
+              >
                 <img
                   src={getFileIcon(file)}
                   alt={file}
-                  className="w-16 h-16 mb-2"
+                  className="w-16 h-16 mb-2 cursor-pointer hover:opacity-80"
                 />
                 <span>{file}</span>
               </div>
@@ -71,17 +91,8 @@ const ChatSection = ({ selectedRemote }) => {
           </div>
         )}
       </div>
-      {!selectedRemote && (
-        <div className="p-4">
-          <input
-            type="text"
-            placeholder="Type your message..."
-            className="w-full p-2 rounded-lg border"
-          />
-        </div>
-      )}
     </div>
   );
 };
 
-export default ChatSection;
+export default CenterSection;

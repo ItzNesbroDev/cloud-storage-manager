@@ -7,7 +7,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import AddStorage from "./addStorage";
-import ChatSection from "./Chat";
+import CenterSection from "./Center";
 import axios from "axios";
 import { API_URL } from "../api";
 
@@ -83,7 +83,7 @@ const Sidebar = () => {
             className="text-white mb-4 flex items-center font-bold"
           >
             <FaBackward className="mr-2" />
-            <span>Go Back to Chat</span>
+            <span>Go Back</span>
           </button>
         )}
         {storages.map((storage, index) => (
@@ -102,7 +102,7 @@ const Sidebar = () => {
           </div>
         ))}
       </div>
-      <ChatSection selectedRemote={selectedRemote} />
+      <CenterSection selectedRemote={selectedRemote} />
       <AddStorage onStorageAdded={handleStorageAdd} />
     </>
   );
