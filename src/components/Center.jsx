@@ -36,18 +36,14 @@ const CenterSection = ({ selectedRemote }) => {
   };
 
   const handleFileClick = (file) => {
-    // Check if the file is a folder
     if (file.endsWith("/")) {
-      // Redirect to the folder path
       navigate(`/${selectedRemote.name}/${file}`);
     } else {
-      // Set the selected file
       setSelectedFile(file);
     }
   };
 
   const handleBarsClick = (file) => {
-    // Set the selected file
     setSelectedFile(file);
   };
 
@@ -56,19 +52,15 @@ const CenterSection = ({ selectedRemote }) => {
   };
 
   const handleMove = async () => {
-    // Perform action based on selected action
     if (action === "move") {
       try {
         let destinationPath = "";
-        // Check if destination path is provided
         if (moveToPath.trim() !== "") {
           destinationPath = moveToPath.trim();
-          // Append a trailing slash if not already present
           if (!destinationPath.endsWith("/")) {
             destinationPath += "/";
           }
         }
-        // Check if destination path is empty, move to root
         if (destinationPath === "") {
           destinationPath = "/";
         }
@@ -99,6 +91,37 @@ const CenterSection = ({ selectedRemote }) => {
         alert("An error occurred while moving the file.");
       }
     }
+  };
+
+  const handleDeleteFile = async (file) => {
+    const conformation = window.confirm(
+      "Are you sure you want to delete this file?"
+    );
+
+    if (!conformation) {
+      return;
+    } else
+      try {
+        const response = await fetch(`${API_URL}/delete_file`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            remote_name: selectedRemote.name,
+            path: file,
+          }),
+        });
+        const data = await response.json();
+        console.log(data.message);
+        console.log(`${selectedRemote.name}:${file}`);
+        alert(data.message);
+        setSelectedFile(null);
+        fetchFiles();
+      } catch (error) {
+        console.error("Error deleting file:", error);
+        alert("An error occurred while deleting the file.");
+      }
   };
 
   const handleMoveToRemoteChange = (e) => {
@@ -211,7 +234,7 @@ const CenterSection = ({ selectedRemote }) => {
                         </button>
                         <button
                           className="inline-block w-auto px-4 py-2 text-sm text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none"
-                          onClick={() => handleActionClick("delete")}
+                          onClick={() => handleDeleteFile(file)}
                         >
                           Delete
                         </button>
