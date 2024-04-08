@@ -10,6 +10,8 @@ const CenterSection = ({ selectedRemote }) => {
   const [action, setAction] = useState(null); // track selected action (move, copy, delete)
   const [moveToRemote, setMoveToRemote] = useState("");
   const [moveToPath, setMoveToPath] = useState("");
+  const [copyToPath, setCopyToPath] = useState("");
+  const [copyToRemote, setCopyToRemote] = useState("");
   const navigate = useNavigate();
 
   const fetchFiles = async () => {
@@ -93,35 +95,46 @@ const CenterSection = ({ selectedRemote }) => {
     }
   };
 
-  const handleDeleteFile = async (file) => {
-    const conformation = window.confirm(
-      "Are you sure you want to delete this file?"
-    );
-
-    if (!conformation) {
-      return;
-    } else
+  const handleCopy = async () => {
+    if (action === "copy") {
       try {
-        const response = await fetch(`${API_URL}/delete_file`, {
+        let destinationPath = "";
+        if (copyToPath.trim() !== "") {
+          destinationPath = copyToPath.trim();
+          if (!destinationPath.endsWith("/")) {
+            destinationPath += "/";
+          }
+        }
+        if (destinationPath === "") {
+          destinationPath = "/";
+        }
+        const response = await fetch(`${API_URL}/copy_file`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            remote_name: selectedRemote.name,
-            path: file,
+            source_remote: selectedRemote.name,
+            source_path: selectedFile,
+            destination_remote: copyToRemote,
+            destination_path:
+              destinationPath +
+              (selectedFile.endsWith("/") ? selectedFile.split("/").pop() : ""),
           }),
         });
         const data = await response.json();
         console.log(data.message);
-        console.log(`${selectedRemote.name}:${file}`);
         alert(data.message);
         setSelectedFile(null);
+        setCopyToRemote("");
+        setCopyToPath("");
+        setAction(null);
         fetchFiles();
       } catch (error) {
-        console.error("Error deleting file:", error);
-        alert("An error occurred while deleting the file.");
+        console.error("Error copying file:", error);
+        alert("An error occurred while copying the file.");
       }
+    }
   };
 
   const handleMoveToRemoteChange = (e) => {
@@ -130,6 +143,14 @@ const CenterSection = ({ selectedRemote }) => {
 
   const handleMoveToPathChange = (e) => {
     setMoveToPath(e.target.value);
+  };
+
+  const handleCopyToRemoteChange = (e) => {
+    setCopyToRemote(e.target.value);
+  };
+
+  const handleCopyToPathChange = (e) => {
+    setCopyToPath(e.target.value);
   };
 
   useEffect(() => {
@@ -213,9 +234,27 @@ const CenterSection = ({ selectedRemote }) => {
                             />
                             <input
                               type="text"
-                              placeholder="Destination Path | Leave empty to move to root"
+                              placeholder="Destination Path | Optional"
                               value={moveToPath}
                               onChange={handleMoveToPathChange}
+                              className="w-full mb-4 px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                            />
+                          </>
+                        )}
+                        {action === "copy" && (
+                          <>
+                            <input
+                              type="text"
+                              placeholder="Destination Remote"
+                              value={copyToRemote}
+                              onChange={handleCopyToRemoteChange}
+                              className="w-full mb-4 px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                            />
+                            <input
+                              type="text"
+                              placeholder="Destination Path | Optional"
+                              value={copyToPath}
+                              onChange={handleCopyToPathChange}
                               className="w-full mb-4 px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
                             />
                           </>
@@ -232,18 +271,20 @@ const CenterSection = ({ selectedRemote }) => {
                         >
                           Copy
                         </button>
-                        <button
-                          className="inline-block w-auto px-4 py-2 text-sm text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none"
-                          onClick={() => handleDeleteFile(file)}
-                        >
-                          Delete
-                        </button>
                         {action === "move" && (
                           <button
                             className="inline-block w-auto px-4 py-2 ml-2 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none"
                             onClick={handleMove}
                           >
                             Confirm Move
+                          </button>
+                        )}
+                        {action === "copy" && (
+                          <button
+                            className="inline-block w-auto px-4 py-2 ml-2 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none"
+                            onClick={handleCopy}
+                          >
+                            Confirm Copy
                           </button>
                         )}
                       </div>

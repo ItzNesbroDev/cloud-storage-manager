@@ -99,22 +99,69 @@ def move_file():
         print('Error executing rclone command:', e)
         return jsonify({'error': 'An error occurred while moving the file'}), 500
 
-@app.route('/delete_file', methods=['POST'])
-def delete_file():
+@app.route('/copy_file', methods=['POST'])
+def copy_file():
     data = request.json
-    remote = data.get('remote')
-    path = data.get('path')
+    source_remote = data.get('source_remote')
+    source_path = data.get('source_path')
+    destination_remote = data.get('destination_remote')
+    destination_path = data.get('destination_path')
 
-    if not remote or not path:
-        return jsonify({'error': 'Remote and path not provided'}), 400
+    if not source_remote or not source_path:
+        return jsonify({'error': 'Source remote and path not provided'}), 400
+    if not destination_remote or not destination_path:
+        return jsonify({'error': 'Destination remote and path not provided'}), 400
 
     try:
-        result = subprocess.run(['rclone', 'delete', f'"{remote}:{path}"'], check=True)
-        return jsonify({'message': f'File deleted successfully from "{remote}:{path}"'}), 200
+        subprocess.run(['rclone', 'copy', f'{source_remote}:{source_path}', f'{destination_remote}:{destination_path}'], check=True)
+        return jsonify({'message': f'File copied successfully from {source_remote}:{source_path} to {destination_remote}:{destination_path}'}), 200
     except subprocess.CalledProcessError as e:
         print('Error executing rclone command:', e)
-        return jsonify({'error': 'An error occurred while deleting the file'}), 500
+        return jsonify({'error': 'An error occurred while copying the file'}), 500
 
+@app.route('/subdir/move_file', methods=['POST'])
+def move_file_subdir():
+    data = request.json
+    remote_name = data.get('remote_name')
+    file_name = data.get('file_name')
+    selected_file = data.get('selected_file')
+    destination_remote = data.get('destination_remote')
+    destination_path = data.get('destination_path')
+
+    if not remote_name or not file_name or not selected_file:
+        return jsonify({'error': 'Remote name, file name, and selected file not provided'}), 400
+    if not destination_remote:
+        return jsonify({'error': 'Destination remote not provided'}), 400
+
+    try:
+        destination = f'{destination_remote}:{destination_path}' if destination_path else f'{destination_remote}:'
+        subprocess.run(['rclone', 'move', f'{remote_name}:{file_name}/{selected_file}', destination], check=True)
+        return jsonify({'message': f'File moved successfully to {destination}'}), 200
+    except subprocess.CalledProcessError as e:
+        print('Error executing rclone command:', e)
+        return jsonify({'error': 'An error occurred while moving the file'}), 500
+
+@app.route('/subdir/copy_file', methods=['POST'])
+def copy_file_subdir():
+    data = request.json
+    remote_name = data.get('remote_name')
+    file_name = data.get('file_name')
+    selected_file = data.get('selected_file')
+    destination_remote = data.get('destination_remote')
+    destination_path = data.get('destination_path')
+
+    if not remote_name or not file_name or not selected_file:
+        return jsonify({'error': 'Remote name, file name, and selected file not provided'}), 400
+    if not destination_remote:
+        return jsonify({'error': 'Destination remote not provided'}), 400
+
+    try:
+        destination = f'{destination_remote}:{destination_path}' if destination_path else f'{destination_remote}:'
+        subprocess.run(['rclone', 'copy', f'{remote_name}:{file_name}/{selected_file}', destination], check=True)
+        return jsonify({'message': f'File copied successfully to {destination}'}), 200
+    except subprocess.CalledProcessError as e:
+        print('Error executing rclone command:', e)
+        return jsonify({'error': 'An error occurred while copying the file'}), 500
 
 
 if __name__ == '__main__':
