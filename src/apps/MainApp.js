@@ -6,8 +6,6 @@ import FilesPage from 'pages/FilesPage/index';
 import LandingPage from 'pages/LandingPage';
 import LoginPage from 'pages/LoginPage';
 import LogoutPage from 'pages/LogoutPage';
-import PicturesListPage from 'pages/PicturesListPage/index';
-import PicturesPage from 'pages/PicturesPage/index';
 import AppShell from './AppShell';
 import './MainApp.scss';
 
@@ -28,10 +26,6 @@ export default function MainApp() {
         <Route path="files" element={<AppShell />}>
           <Route index element={<FilesPage />} />
           <Route path=":id" element={<FilesListPage />} />
-        </Route>
-        <Route path="pictures" element={<AppShell />}>
-          <Route index element={<PicturesPage />} />
-          <Route path=":id" element={<PicturesListPage />} />
         </Route>
         <Route path="/logout" element={<LogoutPage />} />
         <Route path="*" element={global404Page} />

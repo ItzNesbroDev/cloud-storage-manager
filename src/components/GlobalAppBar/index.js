@@ -6,7 +6,6 @@ import Toolbar from '@mui/material/Toolbar';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import AppLogo from 'components/AppLogo';
-import DarkModeToggleSwitch from 'components/DarkModeToggleSwitch';
 import './index.scss';
 
 export default function GlobalAppBar({ onDrawerButttonClicked }) {
@@ -28,7 +27,6 @@ export default function GlobalAppBar({ onDrawerButttonClicked }) {
         </IconButton>
         <AppLogo />
         <div>
-          <DarkModeToggleSwitch />
           <Link to="/logout">
             <IconButton>
               <LogoutIcon />
