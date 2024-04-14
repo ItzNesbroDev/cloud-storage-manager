@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rm -rf ./node_modules && rm -rf ./build",
     "prepare": "husky install",
-    "start-dev": "GENERATE_SOURCEMAP=false react-scripts start",
+    "dev": "GENERATE_SOURCEMAP=false react-scripts start ",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "lint": "eslint 'src/**/*.js' && stylelint 'src/**/*.scss' && prettier --check .",
     "lint:fix": "eslint --fix 'src/**/*.js' && stylelint --fix 'src/**/*.scss' && prettier --write .",
