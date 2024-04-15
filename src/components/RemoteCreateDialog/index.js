@@ -29,7 +29,7 @@ export default function RemoteCreateDialog({ open, onClose }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ remote_name: `"${remoteName}"`, remote_type: remoteType }),
+        body: JSON.stringify({ remote_name: remoteName, remote_type: remoteType }),
       });
       if (!response.ok) {
         const data = await response.json();
