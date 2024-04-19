@@ -7,10 +7,12 @@ import Skeleton from '@mui/material/Skeleton';
 import prettyBytes from 'pretty-bytes';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { BACKEND_URL } from 'url';
 import useFetchRemoteInfo from 'hooks/fetch-data/useFetchRemoteInfo';
 import useFetchRemoteSpaceInfo from 'hooks/fetch-data/useFetchRemoteSpaceInfo';
 import useRCloneClient from 'hooks/rclone/useRCloneClient';
 import { StatusTypes } from 'utils/constants';
+import { DeleteForever } from '../../../node_modules/@mui/icons-material/index';
 import BaseCard from './BaseCard';
 
 export default function InfoCard({ remote, onClick }) {
@@ -76,6 +78,22 @@ export default function InfoCard({ remote, onClick }) {
     setContextMenuPos(undefined);
   };
 
+  const handleDeleteRemote = async (remote) => {
+    try {
+      await fetch(`${BACKEND_URL}/delete_remote`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ remote_name: remote }),
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      alert(`Successfully deleted remote ${remote}, please refresh the page!`);
+    }
+  };
+
   return (
     <>
       <BaseCard
@@ -96,6 +114,15 @@ export default function InfoCard({ remote, onClick }) {
             <DeleteSweepIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Clear Trash</ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => handleDeleteRemote(remote)}
+          data-testid="clear-trash-button"
+        >
+          <ListItemIcon>
+            <DeleteForever fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Delete Remote {remote}</ListItemText>
         </MenuItem>
       </Menu>
     </>

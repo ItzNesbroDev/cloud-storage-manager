@@ -24,6 +24,19 @@ def create_config():
 
     return jsonify({'message': 'Successfully created config.'}), 200
     
+@app.route('/delete_remote', methods=['POST'])
+def delete_remote():
+    remote_name = request.json['remote_name']
+
+    if remote_name == '':
+        return jsonify({'message': 'Remote name cannot be empty.'}), 400
+
+    try:
+        subprocess.run(['rclone', 'config', 'delete', f'{remote_name}'], check=True)
+    except subprocess.CalledProcessError as e:
+        return jsonify({'message': f'Failed to delete remote: {e.stderr.decode()}'}), 500
+
+    return jsonify({'message': 'Successfully deleted remote.'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

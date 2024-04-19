@@ -13,8 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-
-const backendURL = 'https://5000-itznesbrode-cloudstorag-tr37zxmuz1g.ws-us110.gitpod.io';
+import { BACKEND_URL } from 'url';
 
 export default function RemoteCreateDialog({ open, onClose }) {
   const [remoteName, setRemoteName] = useState('');
@@ -24,7 +23,7 @@ export default function RemoteCreateDialog({ open, onClose }) {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${backendURL}/create_config`, {
+      const response = await fetch(`${BACKEND_URL}/create_config`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
